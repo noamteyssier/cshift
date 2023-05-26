@@ -1,8 +1,9 @@
 from setuptools import setup
 
+exec(open('cshift/__version__.py').read())
 setup(
     name="cshift",
-    version="0.1.1",
+    version=__version__,
     description="A tool to perform cluster enrichment/depletion analyses",
     author="Noam Teyssier",
     author_email="Noam.Teyssier@ucsf.edu",
