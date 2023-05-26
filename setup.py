@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="cshift",
-    version="0.1.0",
+    version="0.1.1",
     description="A tool to perform cluster enrichment/depletion analyses",
     author="Noam Teyssier",
     author_email="Noam.Teyssier@ucsf.edu",
