@@ -2,7 +2,7 @@
 
 A tool to perform cluster enrichment/depletion analyses
 
-![plot](resources/example.png)
+![plot](resources/example.tif)
 
 ## Background
 
