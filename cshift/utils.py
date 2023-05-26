@@ -43,7 +43,7 @@ def aggregate_chisquare_test(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
         Observed abundance of each categorical variable (1D array).
     """
     pvalues = np.stack([chisquare_test(ref[i], obs) for i in np.arange(ref.shape[0])])
-    return np.exp(np.log(pvalues).sum(axis=0))
+    return np.exp(np.log(pvalues).mean(axis=0))
 
 
 def percent_change(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
