@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import chi2_contingency
 
+
 def chisquare_test(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
     """
     Multivariate chi-square test for each categorical variable abundance.
@@ -11,25 +12,22 @@ def chisquare_test(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
         Reference abundance of each categorical variable.
     obs : np.ndarray
         Observed abundance of each categorical variable.
-    """ 
+    """
     x_max = ref.sum()
     y_max = obs.sum()
     pvalues = np.zeros(ref.size)
 
     for i in np.arange(pvalues.size):
-
         if ref[i] == 0 and obs[i] == 0:
-            pvalues[i] = 1.
+            pvalues[i] = 1.0
             continue
 
-        m = np.array([
-            [ref[i], x_max - ref[i]],
-            [obs[i], y_max - obs[i]]
-        ])
+        m = np.array([[ref[i], x_max - ref[i]], [obs[i], y_max - obs[i]]])
 
         _, pvalues[i], _, _ = chi2_contingency(m)
 
     return pvalues
+
 
 def aggregate_chisquare_test(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
     """
@@ -43,15 +41,12 @@ def aggregate_chisquare_test(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
         Reference abundance of each categorical variable (2D matrix).
     obs : np.ndarray
         Observed abundance of each categorical variable (1D array).
-    """ 
-    pvalues = np.stack([
-        chisquare_test(ref[i], obs) for i in np.arange(ref.shape[0])
-    ])
+    """
+    pvalues = np.stack([chisquare_test(ref[i], obs) for i in np.arange(ref.shape[0])])
     return np.exp(np.log(pvalues).sum(axis=0))
 
-def percent_change(
-        ref: np.ndarray,
-        obs: np.ndarray) -> np.ndarray:
+
+def percent_change(ref: np.ndarray, obs: np.ndarray) -> np.ndarray:
     """
     calculates the percent change between a reference group
     and a test group. Will first normalize the vectors so that
@@ -60,15 +55,14 @@ def percent_change(
     assert ref.size == obs.size
     r_norm = ref / ref.sum()
     t_norm = obs / obs.sum()
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         pcc = (t_norm - r_norm) / r_norm
-    pcc[np.isinf(pcc)] = 1.
-    pcc[np.isnan(pcc)] = 0.
+    pcc[np.isinf(pcc)] = 1.0
+    pcc[np.isnan(pcc)] = 0.0
     return pcc
 
 
-def false_discovery_rate(
-        pval: np.ndarray) -> np.ndarray:
+def false_discovery_rate(pval: np.ndarray) -> np.ndarray:
     """
     converts the pvalues into false discovery rate q-values
     """
@@ -77,8 +71,7 @@ def false_discovery_rate(
     return qval.reshape(dim)
 
 
-def p_adjust_bh(
-        p: np.ndarray) -> np.ndarray:
+def p_adjust_bh(p: np.ndarray) -> np.ndarray:
     """
     Benjamini-Hochberg p-value correction for multiple hypothesis testing.
     https://stackoverflow.com/a/33532498
@@ -89,4 +82,3 @@ def p_adjust_bh(
     steps = float(len(p)) / np.arange(len(p), 0, -1)
     q = np.minimum(1, np.minimum.accumulate(steps * p[by_descend]))
     return q[by_orig]
-
