@@ -13,6 +13,8 @@ to non-targeting controls.
 
 ## Method
 
+### Cluster Enrichment
+
 This performs a chi-square test for each group/cluster in the provided dataset.
 Specifically, a chi-square test is performed for each group and cluster between
 each group distribution and each non-targeting control distribution.
@@ -20,6 +22,18 @@ The pvalues from this are then aggregated over the non-targeting controls using
 a geometric mean.
 Finally these pvalues are adjusted for multiple hypothesis testing using a
 Benjamini Hochberg correction.
+
+### Visualization
+
+This is visualized using the negative log false discovery rate multiplied by the
+sign of the percent change (to reflect either enrichment[+] or depletion[-] respectively).
+
+By default only groups with **at least one significant cluster** are shown, but
+this can be turned off using the `filter_significant = False` flag on `cs.plot()`.
+
+The visualization is powered by [seaborn clustermap](https://seaborn.pydata.org/generated/seaborn.clustermap.html)
+and a `**kwargs` is included so you can pass in all relevant arguments into `clustermap`
+from the `cs.plot()` interface.
 
 ## Usage
 
