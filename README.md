@@ -2,6 +2,8 @@
 
 A tool to perform cluster enrichment/depletion analyses
 
+![plot](resources/example.png)
+
 ## Background
 
 This is a tool to perform cluster enrichment/depletions with known groups.
