@@ -21,9 +21,12 @@ Benjamini Hochberg correction.
 
 ## Usage
 
+### Toy Dataset
+
 Here is an example starting from scratch
 
 ``` python
+import numpy as np
 from cshift import CShift
 
 # define your array of clusters
@@ -45,10 +48,14 @@ cs = CShift(
 # perform all the chi-square tests and calculate the percent change
 # and false discovery matrix
 pcc, qval = cs.fit()
+assert pcc.shape == (3, 2)
+assert qval.shape == (3, 2)
 
 # plot the signed negative log adjusted p-values as a clustermap
 cs.plot()
 ```
+
+### With Single Cell Sequencing
 
 Here is an example of what it would be like in context of single-cell analysis
 
