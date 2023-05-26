@@ -52,7 +52,8 @@ assert pcc.shape == (3, 2)
 assert qval.shape == (3, 2)
 
 # plot the signed negative log adjusted p-values as a clustermap
-cs.plot()
+# this is commented out because there will not be any enrichment/depletions
+# cs.plot()
 ```
 
 ### With Single Cell Sequencing
