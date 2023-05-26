@@ -8,5 +8,5 @@ setup(
     author="Noam Teyssier",
     author_email="Noam.Teyssier@ucsf.edu",
     packages=["cshift"],
-    install_requires=["numpy", "scipy", "pandas", "seaborn", "matplotlib"],
+    install_requires=["numpy", "scipy", "pandas", "seaborn", "matplotlib", "tqdm"],
 )

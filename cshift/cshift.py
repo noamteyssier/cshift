@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from itertools import product
+from tqdm import tqdm
 from .utils import aggregate_chisquare_test, false_discovery_rate, percent_change
 
 
@@ -10,10 +12,16 @@ class CShift:
     A method of performing cluster enrichments/depletions
     """
 
-    def __init__(self, clusters: np.ndarray, groups: np.ndarray, reference: np.ndarray):
+    def __init__(
+            self, 
+            clusters: np.ndarray, 
+            groups: np.ndarray, 
+            reference: np.ndarray,
+            quiet: bool = False):
         self.clusters = np.array(clusters)
         self.groups = np.array(groups)
         self.reference = np.array(reference)
+        self.quiet = quiet
 
         self._validate_inputs()
         self._group_counts()
@@ -39,11 +47,18 @@ class CShift:
 
     def _build_distributions(self):
         self.distributions = np.zeros((self.g_unique.size, self.c_unique.size))
-        for idx, g in enumerate(self.g_unique):
-            for jdx, c in enumerate(self.c_unique):
-                self.distributions[idx, jdx] = np.sum(
-                    np.logical_and(self.clusters == c, self.groups == g)
+        
+        iter = product(np.arange(self.g_size), np.arange(self.c_size))
+        if not self.quiet:
+            iter = tqdm(iter, total=self.g_size * self.c_size, desc="Calculating distributions")
+
+        for (idx, jdx) in iter:
+            self.distributions[idx, jdx] = np.sum(
+                np.logical_and(
+                    self.groups == self.g_unique[idx],
+                    self.clusters == self.c_unique[jdx], 
                 )
+            )
 
     def _get_reference_idx(self):
         self.ref_idx = np.flatnonzero(np.isin(self.g_unique, self.reference))
@@ -52,12 +67,18 @@ class CShift:
         """
         Performs the cluster shift enrichment analysis
         """
+        iter_pval = np.arange(self.g_size)
+        iter_pcc = np.arange(self.g_size)
+        if not self.quiet:
+            iter_pval = tqdm(iter_pval, desc="Calculating p-values")
+            iter_pcc = tqdm(iter_pcc, desc="Calculating percent change")
+
         self.pval_matrix = np.stack(
             [
                 aggregate_chisquare_test(
                     self.distributions[self.ref_idx], self.distributions[i]
                 )
-                for i in np.arange(self.g_size)
+                for i in iter_pval
             ]
         )
         self.pcc_matrix = np.stack(
@@ -65,7 +86,7 @@ class CShift:
                 percent_change(
                     self.distributions[self.ref_idx].mean(axis=0), self.distributions[i]
                 )
-                for i in np.arange(self.g_size)
+                for i in iter_pcc
             ]
         )
         self.qval_matrix = false_discovery_rate(self.pval_matrix)
