@@ -101,6 +101,7 @@ class CShift:
         transpose=False,
         threshold=0.05,
         filter_significant=True,
+        percent_change=False,
         center=0,
         linewidth=1.0,
         linecolor="black",
@@ -112,7 +113,11 @@ class CShift:
         """
         Plot the cluster shift enrichment as a clustermap
         """
-        mat = -np.log(self.qval_matrix) * np.sign(self.pcc_matrix)
+        if percent_change:
+            mat = self.pcc_matrix
+        else:
+            mat = -np.log(self.qval_matrix) * np.sign(self.pcc_matrix)
+
         df = pd.DataFrame(mat, index=self.g_unique, columns=self.c_unique)
 
         if reorder_groups is not None:
