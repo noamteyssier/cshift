@@ -14,11 +14,12 @@ class CShift:
     """
 
     def __init__(
-            self, 
-            clusters: np.ndarray, 
-            groups: np.ndarray, 
-            reference: np.ndarray,
-            quiet: bool = False):
+        self,
+        clusters: np.ndarray,
+        groups: np.ndarray,
+        reference: np.ndarray,
+        quiet: bool = False,
+    ):
         self.clusters = np.array(clusters)
         self.groups = np.array(groups)
         self.reference = np.array(reference)
@@ -48,16 +49,18 @@ class CShift:
 
     def _build_distributions(self):
         self.distributions = np.zeros((self.g_unique.size, self.c_unique.size))
-        
+
         iter = product(np.arange(self.g_size), np.arange(self.c_size))
         if not self.quiet:
-            iter = tqdm(iter, total=self.g_size * self.c_size, desc="Calculating distributions")
+            iter = tqdm(
+                iter, total=self.g_size * self.c_size, desc="Calculating distributions"
+            )
 
-        for (idx, jdx) in iter:
+        for idx, jdx in iter:
             self.distributions[idx, jdx] = np.sum(
                 np.logical_and(
                     self.groups == self.g_unique[idx],
-                    self.clusters == self.c_unique[jdx], 
+                    self.clusters == self.c_unique[jdx],
                 )
             )
 
@@ -113,11 +116,15 @@ class CShift:
         df = pd.DataFrame(mat, index=self.g_unique, columns=self.c_unique)
 
         if reorder_groups is not None:
-            assert set(reorder_groups) == set(self.g_unique), "reorder_groups must contain all groups"
+            assert set(reorder_groups) == set(
+                self.g_unique
+            ), "reorder_groups must contain all groups"
             df = df.loc[reorder_groups]
 
         if reorder_clusters is not None:
-            assert set(reorder_clusters) == set(self.c_unique), "reorder_clusters must contain all clusters"
+            assert set(reorder_clusters) == set(
+                self.c_unique
+            ), "reorder_clusters must contain all clusters"
             df = df.loc[:, reorder_clusters]
 
         if filter_significant:
