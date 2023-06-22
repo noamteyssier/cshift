@@ -1,6 +1,6 @@
 from setuptools import setup
 
-exec(open('cshift/__version__.py').read())
+exec(open("cshift/__version__.py").read())
 setup(
     name="cshift",
     version=__version__,

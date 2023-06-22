@@ -68,3 +68,30 @@ def test_distributions():
     reference = np.array([0, 1])
     cshift = CShift(clusters, groups, reference)
     assert np.sum(cshift.distributions - np.array([[1, 1, 1], [1, 1, 1]])) == 0
+
+
+def test_plot():
+    clusters = np.array([0, 1, 2, 0, 1, 2])
+    groups = np.array([0, 0, 0, 1, 1, 1])
+    reference = np.array([0, 1])
+    cshift = CShift(clusters, groups, reference)
+    cshift.fit()
+    cshift.plot(filter_significant=False, show=False)
+
+
+def test_plot_reorder_clusters():
+    clusters = np.array([0, 1, 2, 0, 1, 2])
+    groups = np.array([0, 0, 0, 1, 1, 1])
+    reference = np.array([0, 1])
+    cshift = CShift(clusters, groups, reference)
+    cshift.fit()
+    cshift.plot(filter_significant=False, show=False, reorder_clusters=[2, 1, 0])
+
+
+def test_plot_reorder_groups():
+    clusters = np.array([0, 1, 2, 0, 1, 2])
+    groups = np.array([0, 0, 0, 1, 1, 1])
+    reference = np.array([0, 1])
+    cshift = CShift(clusters, groups, reference)
+    cshift.fit()
+    cshift.plot(filter_significant=False, show=False, reorder_groups=[1, 0])
