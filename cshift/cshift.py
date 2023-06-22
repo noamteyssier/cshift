@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -101,6 +102,8 @@ class CShift:
         linewidth=1.0,
         linecolor="black",
         show=True,
+        reorder_groups: Optional[list] = None,
+        reorder_clusters: Optional[list] = None,
         **kwargs
     ):
         """
@@ -108,6 +111,15 @@ class CShift:
         """
         mat = -np.log(self.qval_matrix) * np.sign(self.pcc_matrix)
         df = pd.DataFrame(mat, index=self.g_unique, columns=self.c_unique)
+
+        if reorder_groups is not None:
+            assert set(reorder_groups) == set(self.g_unique), "reorder_groups must contain all groups"
+            df = df.loc[reorder_groups]
+
+        if reorder_clusters is not None:
+            assert set(reorder_clusters) == set(self.c_unique), "reorder_clusters must contain all clusters"
+            df = df.loc[:, reorder_clusters]
+
         if filter_significant:
             df = df.loc[(self.qval_matrix <= threshold).any(axis=1)]
             if df.empty:
