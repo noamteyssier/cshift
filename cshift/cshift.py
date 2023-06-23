@@ -108,7 +108,7 @@ class CShift:
         show=True,
         reorder_groups: Optional[list] = None,
         reorder_clusters: Optional[list] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Plot the cluster shift enrichment as a clustermap
@@ -168,14 +168,20 @@ class CShift:
         norm_dist = self.distributions / self.distributions.sum(axis=1).reshape(-1, 1)
 
         # Build the dataframe
-        df = pd.DataFrame({
-            "group": self.g_unique,
-            "fraction": norm_dist[:, self.c_unique == cluster_name].ravel(),
-            "pvalue": self.pval_matrix[:, self.c_unique == cluster_name].ravel(),
-            "qvalue": self.qval_matrix[:, self.c_unique == cluster_name].ravel(),
-        })
-        df['is significant'] = df['qvalue'] <= threshold
-        df['group_class'] = df['group'].isin(self.reference).apply(lambda x: "Reference" if x else "Test")
+        df = pd.DataFrame(
+            {
+                "group": self.g_unique,
+                "fraction": norm_dist[:, self.c_unique == cluster_name].ravel(),
+                "pvalue": self.pval_matrix[:, self.c_unique == cluster_name].ravel(),
+                "qvalue": self.qval_matrix[:, self.c_unique == cluster_name].ravel(),
+            }
+        )
+        df["is significant"] = df["qvalue"] <= threshold
+        df["group_class"] = (
+            df["group"]
+            .isin(self.reference)
+            .apply(lambda x: "Reference" if x else "Test")
+        )
         df.sort_values(by="group_class", inplace=True)
 
         if figsize is not None:
