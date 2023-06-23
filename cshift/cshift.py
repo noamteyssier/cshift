@@ -152,3 +152,48 @@ class CShift:
             plt.show()
         else:
             return fig
+
+    def boxplot(
+        self,
+        cluster_name,
+        threshold=0.05,
+        show=True,
+        figsize=None,
+        dpi=None,
+    ):
+        """
+        Plot the distributions of a single cluster across the different groups
+        """
+        # Calculate the normalized distribution
+        norm_dist = self.distributions / self.distributions.sum(axis=1).reshape(-1, 1)
+
+        # Build the dataframe
+        df = pd.DataFrame({
+            "group": self.g_unique,
+            "fraction": norm_dist[:, self.c_unique == cluster_name].ravel(),
+            "pvalue": self.pval_matrix[:, self.c_unique == cluster_name].ravel(),
+            "qvalue": self.qval_matrix[:, self.c_unique == cluster_name].ravel(),
+        })
+        df['is significant'] = df['qvalue'] <= threshold
+        df['group_class'] = df['group'].isin(self.reference).apply(lambda x: "Reference" if x else "Test")
+        df.sort_values(by="group_class", inplace=True)
+
+        if figsize is not None:
+            plt.figure(figsize=figsize, dpi=dpi)
+
+        # Plot the boxplot
+        g = sns.boxplot(
+            data=df,
+            x="group_class",
+            y="fraction",
+            hue="is significant",
+            palette={True: "#c5381a", False: "#7f888f"},
+        )
+        plt.title(f"Cluster {cluster_name}")
+        plt.xlabel("Reference/Test Groups")
+        plt.ylabel("Fraction of cells in cluster")
+
+        if show:
+            plt.show()
+        else:
+            return g
