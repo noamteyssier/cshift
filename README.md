@@ -1,5 +1,7 @@
 # cshift
 
+[![DOI](https://zenodo.org/badge/645950835.svg)](https://doi.org/10.5281/zenodo.20736462)
+
 A tool to perform cluster enrichment/depletion analyses
 
 ![plot](resources/example.svg)
